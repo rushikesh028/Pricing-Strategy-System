@@ -1,183 +1,278 @@
 # Pricing Strategy System
 
-A Spring Boot application that manages products and calculates AI-assisted pricing using a Weka linear regression model.
+## Overview
 
-## Tech Stack
+Pricing Strategy System is a Machine Learning-powered pricing platform built using Spring Boot and Weka. The application helps businesses optimize product pricing by analyzing market factors such as demand, competitor pricing, and inventory levels.
 
-- Java 17
-- Spring Boot 4
-- Spring Web MVC
-- Spring Data JPA
-- MySQL (runtime)
-- Thymeleaf (dashboard UI)
-- Weka (`weka-stable` 3.8.6)
-- Maven Wrapper (`mvnw`, `mvnw.cmd`)
+The system provides intelligent price recommendations, revenue simulation, and multiple pricing strategies through REST APIs and a web-based dashboard.
 
-## Features
+---
 
-- CRUD APIs for products
-- AI price prediction endpoint
-- Strategy-based pricing (`PROFIT`, `PENETRATION`, `COMPETITIVE`)
-- Revenue simulation endpoint
-- Basic dashboard and pricing result pages
+## Key Features
+
+### Product Management
+
+* Create, update, retrieve, and delete products
+* Store product information, pricing data, demand metrics, and inventory details
+
+### Machine Learning Price Prediction
+
+* Predict optimal product prices using a Weka Linear Regression model
+* Generate data-driven pricing recommendations
+
+### Dynamic Pricing Strategies
+
+* Profit Maximization Strategy
+* Market Penetration Strategy
+* Competitive Pricing Strategy
+
+### Revenue Simulation
+
+* Simulate expected revenue based on different pricing scenarios
+* Compare pricing strategies before implementation
+
+### Dashboard
+
+* Interactive dashboard for product management
+* Pricing analysis and recommendation views
+
+### API Documentation
+
+* Swagger UI integration for easy API testing and exploration
+
+---
+
+## Technology Stack
+
+* Java 17
+* Spring Boot
+* Spring Web MVC
+* Spring Data JPA
+* Hibernate
+* H2 Database / MySQL
+* Thymeleaf
+* Weka 3.8.6
+* Maven
+* Docker
+
+---
+
+## Project Architecture
+
+```text
+Client/UI
+    │
+    ▼
+Controllers
+    │
+    ▼
+Services
+    │
+    ├── Pricing Engine
+    ├── Revenue Simulator
+    └── ML Prediction Service (Weka)
+    │
+    ▼
+Repositories
+    │
+    ▼
+Database (H2/MySQL)
+```
+
+---
 
 ## Project Structure
 
 ```text
 src/main/java/com/File/Pricing/Strategy/System
-  controller/   # REST + dashboard controllers
-  ml/           # Weka model training and prediction
-  model/        # JPA entities
-  repository/   # Spring Data repositories
-  service/      # business logic
+├── controller
+├── service
+├── repository
+├── model
+├── ml
+└── PricingStrategySystemApplication
 
 src/main/resources
-  application.properties
-  pricing-data.arff
-  templates/    # Thymeleaf views
+├── application.properties
+├── pricing-data.arff
+└── templates
 
 frontend/
-  App.js
-  components/   # standalone React source (optional separate UI)
+├── App.js
+└── components
 ```
+
+---
 
 ## Prerequisites
 
-1. JDK 17 installed and available on PATH
-2. MySQL running locally
-3. Database created:
-   - `pricing_db`
+* Java 17 or later
+* Maven 3.8+
+* MySQL (Optional)
+* Docker (Optional)
+
+---
 
 ## Configuration
 
-Current DB settings are in `src/main/resources/application.properties`:
+Default configuration uses an H2 in-memory database.
 
 ```properties
 spring.datasource.url=jdbc:h2:mem:pricing_runtime_db;DB_CLOSE_DELAY=-1;MODE=MySQL
-spring.datasource.username=sa
-spring.datasource.password=
+spring.datasource.username=${DB_USERNAME:}
+spring.datasource.password=${DB_PASSWORD:}
 ```
 
-For MySQL, override with env vars:
+For MySQL deployment:
 
 ```text
 DB_URL=jdbc:mysql://localhost:3306/pricing_db
-DB_USERNAME=root
-DB_PASSWORD=your_password
+DB_USERNAME=${DB_USERNAME:}
+DB_PASSWORD=${DB_PASSWORD:}
 ```
 
-The app runs on:
+---
 
-- `http://localhost:8080` (or the value of `PORT`)
+## Running the Application
 
-## Run Locally
+### Using Maven
 
-Windows:
+Windows
 
-```powershell
-.\mvnw.cmd spring-boot:run
+```bash
+mvnw.cmd spring-boot:run
 ```
 
-macOS/Linux:
+Linux/macOS
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-## Build and Test
+### Build the Application
 
-Build:
-
-```powershell
-.\mvnw.cmd clean package
+```bash
+mvnw clean package
 ```
 
-Test:
-
-```powershell
-.\mvnw.cmd test
-```
-
-Tests use H2 in-memory DB (`src/test/resources/application.properties`), so they do not require MySQL.
+---
 
 ## Docker Deployment
 
-Build image:
+Build Docker Image
 
-```powershell
-docker build -t pricing-strategy-system:latest .
+```bash
+docker build -t pricing-strategy-system .
 ```
 
-Run container:
+Run Container
 
-```powershell
-docker run -d --name pricing-strategy-system ^
-  -p 8080:8080 ^
-  -e DB_URL=jdbc:mysql://host.docker.internal:3306/pricing_db ^
-  -e DB_USERNAME=root ^
-  -e DB_PASSWORD=your_password ^
-  pricing-strategy-system:latest
+```bash
+docker run -d \
+-p 8080:8080 \
+-e DB_URL=jdbc:mysql://host.docker.internal:3306/pricing_db \
+-e DB_USERNAME=${DB_USERNAME:}
+-e DB_PASSWORD=${DB_PASSWORD:}
+pricing-strategy-system
 ```
 
-Optional JVM tuning:
+---
 
-```powershell
--e JAVA_OPTS="-Xms256m -Xmx512m"
+## User Interface
+
+### Dashboard
+
+```text
+GET /dashboard
 ```
 
-## UI Endpoints
+Displays:
 
-- `GET /dashboard` - list products and simulate revenue
-- `GET /price/{id}` - show predicted price and explanation
+* Product inventory
+* Pricing recommendations
+* Revenue simulations
 
-## REST API
+### Pricing Results
 
-### Product API (`/api/products`)
-
-- `POST /api/products`
-- `GET /api/products`
-- `GET /api/products/{id}`
-- `PUT /api/products/{id}`
-- `DELETE /api/products/{id}`
-
-Example create request:
-
-```http
-POST /api/products
-Content-Type: application/json
-
-{
-  "name": "Wireless Mouse",
-  "imageUrl": "https://example.com/mouse.jpg",
-  "basePrice": 999,
-  "demand": 80,
-  "competitorPrice": 950,
-  "stock": 30
-}
+```text
+GET /price/{id}
 ```
 
-### Pricing API (`/api/pricing`)
+Displays:
 
-- `GET /api/pricing/{productId}` - predicted price + explanation
-- `GET /api/pricing/simulate/revenue?productId={id}&price={price}` - revenue simulation
-- `GET /api/pricing/strategy?productId={id}&strategy={PROFIT|PENETRATION|COMPETITIVE}` - strategy pricing
+* Predicted price
+* Pricing explanation
+* Strategy comparison
 
-## API Documentation (Swagger)
+---
 
-After starting the app, open:
+## REST APIs
 
-- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
-- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+### Product APIs
 
-## Notes
+```text
+POST   /api/products
+GET    /api/products
+GET    /api/products/{id}
+PUT    /api/products/{id}
+DELETE /api/products/{id}
+```
 
-- The ML model is trained on startup from `src/main/resources/pricing-data.arff`.
-- If the ARFF file is missing or invalid, startup fails with a clear error.
+### Pricing APIs
 
-## IP Protection
+```text
+GET /api/pricing/{productId}
+GET /api/pricing/simulate/revenue
+GET /api/pricing/strategy
+```
 
-- This project is now marked as proprietary with an `All rights reserved` [LICENSE](LICENSE).
-- Source files are excluded from `git archive` exports via `.gitattributes` (`export-ignore`), so generated archive downloads can be limited.
-- Runtime credentials are no longer hardcoded; use `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables.
+---
 
-Important limitation: no technical control can fully prevent copying once a person has source access (for example through `git clone`). To actually enforce this, keep the repository private and only distribute built artifacts.
+## Swagger Documentation
+
+After application startup:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+OpenAPI Specification:
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+---
+
+## Machine Learning Model
+
+The application trains a Weka Linear Regression model during startup using the dataset:
+
+```text
+src/main/resources/pricing-data.arff
+```
+
+Prediction factors include:
+
+* Base Price
+* Demand
+* Competitor Price
+* Inventory Levels
+
+---
+
+## Future Enhancements
+
+* Real-time competitor price monitoring
+* Advanced forecasting models
+* Cloud deployment on AWS
+* Analytics dashboard
+* Role-Based Authentication and Authorization
+
+---
+
+## Author
+
+Rushikesh Asawale
+
+Java Backend Developer | Spring Boot | REST APIs | Docker | Machine Learning
