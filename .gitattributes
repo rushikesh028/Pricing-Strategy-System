@@ -1,0 +1,10 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+# Exclude source and build metadata from git archive exports.
+# Note: this does not block `git clone` access.
+src export-ignore
+pom.xml export-ignore
+.mvn export-ignore
+mvnw export-ignore
+mvnw.cmd export-ignore

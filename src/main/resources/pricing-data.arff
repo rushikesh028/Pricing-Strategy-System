@@ -1,0 +1,11 @@
+@relation pricing
+
+@attribute demand numeric
+@attribute competitorPrice numeric
+@attribute stock numeric
+@attribute price numeric
+
+@data
+80,52000,20,54000
+60,50000,40,51000
+90,55000,10,58000
