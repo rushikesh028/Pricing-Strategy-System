@@ -106,7 +106,7 @@ frontend/
 
 ## Prerequisites
 
-* Java 17 or later
+* Java 17
 * Maven 3.8+
 * MySQL (Optional)
 * Docker (Optional)
