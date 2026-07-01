@@ -1,7 +1,2 @@
 @relation pricing
 
-@attribute demand numeric
-@attribute competitorPrice numeric
-@attribute stock numeric
-@attribute price numeric
-
